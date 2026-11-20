@@ -34,3 +34,4 @@ patches/0033-third_party-blink-renderer-core-html-canvas-text_metrics-cc.patch
 patches/0034-third_party-blink-renderer-modules-quota-storage_manager-cc.patch
 patches/0035-webgl2-getparameter-version-normalize.patch
 patches/0036-build-config-compiler-BUILD-gn.patch
+patches/0037-base-i18n-icubridge-default_icu_locale-h.patch

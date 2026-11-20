@@ -1,22 +1,21 @@
 diff --git a/third_party/blink/renderer/core/html/canvas/text_metrics.cc b/third_party/blink/renderer/core/html/canvas/text_metrics.cc
-index a78150b4a6..ecf6fde85a 100644
+index 83a4232..0ece1c4 100644
 --- a/third_party/blink/renderer/core/html/canvas/text_metrics.cc
 +++ b/third_party/blink/renderer/core/html/canvas/text_metrics.cc
-@@ -4,7 +4,12 @@
+@@ -4,6 +4,11 @@
  
  #include "third_party/blink/renderer/core/html/canvas/text_metrics.h"
  
 +#include <cmath>
 +
 +#include "base/bit_cast.h"
- #include "base/numerics/checked_math.h"
 +#include "base/strings/string_number_conversions.h"  // FORTRESS
 +#include "base/uxr_config.h"                          // FORTRESS
  #include "third_party/blink/renderer/bindings/core/v8/v8_canvas_text_align.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_canvas_text_baseline.h"
  #include "third_party/blink/renderer/bindings/core/v8/v8_text_cluster_options.h"
-@@ -92,6 +97,21 @@ TextMetrics::TextMetrics(const Font* font,
-   Update(font, direction, baseline, align, text, text_painter);
+@@ -116,6 +121,21 @@ void TextMetrics::InitFromShapedText() {
+   PopulateVerticalMetrics(*font_data, glyph_bounds);
  }
  
 +// FORTRESS: seeded, value-dependent sub-pixel jitter for TextMetrics. Canvas/audio/DOMRect
@@ -34,15 +33,17 @@ index a78150b4a6..ecf6fde85a 100644
 +  return v + delta;
 +}
 +
- void TextMetrics::Update(const Font* font,
-                          const TextDirection& direction,
-                          const V8CanvasTextBaseline::Enum baseline,
-@@ -167,6 +187,23 @@ void TextMetrics::Update(const Font* font,
+ void TextMetrics::PopulateVerticalMetrics(const SimpleFontData& font_data,
+                                           const gfx::RectF& glyph_bounds) {
+   const FontMetrics& font_metrics = font_data.GetFontMetrics();
+@@ -158,6 +178,25 @@ void TextMetrics::PopulateVerticalMetrics(const SimpleFontData& font_data,
    } else {
      baselines_->setIdeographic(-descent - baseline_y);
    }
 +
 +  // FORTRESS: apply per-persona jitter so TextMetrics is not a stable measurement fingerprint.
++  // Chromium 159 split the old Update() into two constructors that both set width_ and the
++  // horizontal bounds, then call this function last, so this is the shared final step.
 +  uint32_t ph_seed = 0;
 +  base::UxrConfig& ph_cfg = base::UxrConfig::GetInstance();
 +  if (ph_cfg.Has("uxr-canvas-seed"))
@@ -60,4 +61,4 @@ index a78150b4a6..ecf6fde85a 100644
 +  }
  }
  
- std::pair<float, gfx::RectF> TextMetrics::MeasureRuns(
+ const HeapVector<Member<DOMRectReadOnly>> TextMetrics::getSelectionRects(

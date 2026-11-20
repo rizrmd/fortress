@@ -56,7 +56,7 @@ git checkout --detach "$REVISION"
 gclient sync -D --no-history
 
 # 3. install build deps (first run; harmless to repeat)
-./build/install-build-deps.sh --no-prompt
+./build/install-build-deps.sh --no-prompt --no-backwards-compatible
 python3 "$REPO/tools/check_chromium_source.py" --source "$WORK/chromium/src"
 
 # 4. apply Fortress patches
@@ -64,6 +64,12 @@ python3 "$REPO/tools/check_chromium_source.py" --source "$WORK/chromium/src"
 
 # 5. configure + build
 "$WORK/chromium/src/buildtools/linux64/gn" gen "out/$OUT" --fail-on-unused-args --args="$(cat "$ARGS_FILE")"
+# Set FORTRESS_STOP_AFTER_GN=1 to stop here (patched + configured), e.g. to compile
+# only the patched files first as a quick check before the multi-hour full build.
+if [[ -n "${FORTRESS_STOP_AFTER_GN:-}" ]]; then
+  echo "==> Configured out/$OUT; stopping before compile (FORTRESS_STOP_AFTER_GN)"
+  exit 0
+fi
 "$WORK/chromium/src/third_party/ninja/ninja" -j "${BUILD_JOBS:-4}" -C "out/$OUT" chrome chrome_crashpad_handler
 
 echo "==> Done: $WORK/chromium/src/out/$OUT/chrome"

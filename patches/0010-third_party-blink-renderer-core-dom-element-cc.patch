@@ -1,19 +1,18 @@
 diff --git a/third_party/blink/renderer/core/dom/element.cc b/third_party/blink/renderer/core/dom/element.cc
-index aa3d9236fd..177c17bd88 100644
+index 1a2dc9d..c192df5 100644
 --- a/third_party/blink/renderer/core/dom/element.cc
 +++ b/third_party/blink/renderer/core/dom/element.cc
-@@ -32,7 +32,10 @@
- #include <memory>
+@@ -33,6 +33,9 @@
+ #include <ranges>
  #include <utility>
  
 +#include "base/bit_cast.h"
- #include "base/containers/adapters.h"
 +#include "base/strings/string_number_conversions.h"
 +#include "base/uxr_config.h"
  #include "base/feature_list.h"
  #include "cc/input/snap_selection_strategy.h"
  #include "components/viz/common/surfaces/tracked_element_rects.h"
-@@ -3406,6 +3409,39 @@ gfx::Rect Element::VisibleBoundsRespectingClipsInLocalRoot() const {
+@@ -3442,6 +3445,39 @@ gfx::Rect Element::VisibleBoundsRespectingClipsInLocalRoot() const {
    return ToPixelSnappedRect(rect_in_local_root);
  }
  
@@ -53,7 +52,7 @@ index aa3d9236fd..177c17bd88 100644
  void Element::ClientQuads(Vector<gfx::QuadF>& quads) const {
    LayoutObject* element_layout_object = GetLayoutObject();
    if (!element_layout_object) {
-@@ -3439,6 +3475,7 @@ void Element::ClientQuads(Vector<gfx::QuadF>& quads) const {
+@@ -3475,6 +3511,7 @@ void Element::ClientQuads(Vector<gfx::QuadF>& quads) const {
    if (element_layout_object->IsBoxModelObject() ||
        element_layout_object->IsBR()) {
      element_layout_object->AbsoluteQuads(quads);

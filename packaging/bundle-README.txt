@@ -1,4 +1,4 @@
-Tilion Fortress - stealth Chromium 151 (Linux x64)
+Tilion Fortress - stealth Chromium @CHROMIUM_VERSION@ (Linux x64)
 ===================================================
 
 RUN (browser):       ./tilion https://example.com
@@ -14,3 +14,5 @@ Tweak:    TILION_TZ=America/Chicago   TILION_LANG=en-GB,en
 This is the max-stealth Fortress flavor of the Tilion engine. See the repo for
 build-from-source, the patch series, and the detection-suite results:
 https://github.com/tiliondev/fortress
+
+LICENSE and NOTICE cover the Fortress patches, the bundled fonts and Chromium.

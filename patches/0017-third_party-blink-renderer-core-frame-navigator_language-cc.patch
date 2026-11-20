@@ -1,20 +1,22 @@
 diff --git a/third_party/blink/renderer/core/frame/navigator_language.cc b/third_party/blink/renderer/core/frame/navigator_language.cc
-index 75cd346131..376dece63a 100644
+index a333624eae..9f661533c9 100644
 --- a/third_party/blink/renderer/core/frame/navigator_language.cc
 +++ b/third_party/blink/renderer/core/frame/navigator_language.cc
-@@ -5,6 +5,11 @@
+@@ -5,6 +5,13 @@
  #include "third_party/blink/renderer/core/frame/navigator_language.h"
  
- #include "base/command_line.h"
+ #include "third_party/blink/renderer/core/probe/core_probes.h"
 +#include "third_party/blink/renderer/core/execution_context/execution_context.h"
 +#include "v8/include/v8-isolate.h"
-+#include "base/i18n/rtl.h"
++#include <optional>
++#include "base/i18n/icubridge/default_icu_locale.h"
++#include "base/i18n/tag_converters.h"
 +#include "third_party/blink/renderer/platform/wtf/wtf.h"
 +#include "base/uxr_config.h"
- #include "services/network/public/cpp/features.h"
- #include "third_party/blink/public/common/switches.h"
- #include "third_party/blink/renderer/core/frame/web_feature.h"
-@@ -69,6 +74,30 @@ void NavigatorLanguage::SetLanguagesForTesting(const String& languages) {
+ #include "third_party/blink/renderer/platform/language.h"
+ #include "third_party/blink/renderer/platform/wtf/text/string_builder.h"
+ 
+@@ -61,6 +68,36 @@ void NavigatorLanguage::SetLanguagesDirty() {
  }
  
  void NavigatorLanguage::EnsureUpdatedLanguage() {
@@ -32,7 +34,13 @@ index 75cd346131..376dece63a 100644
 +        // FORTRESS P0-E fix: icu::Locale::setDefault is process-global and NOT
 +        // thread-safe; only touch it on the main thread (workers would race).
 +        if (!languages_.empty() && IsMainThread()) {
-+          base::i18n::SetICUDefaultLocale(languages_.front().Utf8());
++          // Chromium 159: the ICU default locale is set through the pass-key API.
++          if (std::optional<base::i18n::LanguageTag> p_tag =
++                  base::i18n::GetLanguageTagFromString(
++                      languages_.front().Utf8())) {
++            base::i18n::SetDefaultIcuLocale(
++                base::i18n::DefaultIcuLocaleSetterKey(), *p_tag);
++          }
 +          if (execution_context_ && execution_context_->GetIsolate()) {
 +            execution_context_->GetIsolate()
 +                ->LocaleConfigurationChangeNotification();

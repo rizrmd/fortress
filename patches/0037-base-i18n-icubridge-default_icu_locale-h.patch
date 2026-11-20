@@ -1,0 +1,20 @@
+diff --git a/base/i18n/icubridge/default_icu_locale.h b/base/i18n/icubridge/default_icu_locale.h
+index e93cf35ffe..be3b25d2eb 100644
+--- a/base/i18n/icubridge/default_icu_locale.h
++++ b/base/i18n/icubridge/default_icu_locale.h
+@@ -53,6 +53,7 @@ void InitIcuAndResourceBundleBrowserSide();
+ 
+ namespace blink {
+ class LocaleController;
++class NavigatorLanguage;  // FORTRESS: persona navigator.languages
+ }
+ 
+ namespace content {
+@@ -83,6 +84,7 @@ class BASE_I18N_EXPORT DefaultIcuLocaleSetterKey {
+  private:
+   friend class ScopedDefaultIcuLocale;
+   friend class ::blink::LocaleController;
++  friend class ::blink::NavigatorLanguage;  // FORTRESS
+   friend class ::android_webview::AwMainDelegate;
+   friend void ::android_webview::InitIcuAndResourceBundleBrowserSide();
+   friend class ::WebEngineMainDelegate;

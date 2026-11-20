@@ -52,7 +52,11 @@ cp "$FONTS"/*.ttf "$B/fonts/"
 cp "$REPO/packaging/persona.sh" "$B/persona.sh"
 cp "$REPO/packaging/tilion" "$B/tilion"; chmod +x "$B/tilion"
 cp "$REPO/packaging/fonts.conf.template" "$B/fonts/fonts.conf.template"
-cp "$REPO/packaging/bundle-README.txt" "$B/README.txt"
+sed "s/@CHROMIUM_VERSION@/$(cat "$REPO/CHROMIUM_VERSION")/" \
+  "$REPO/packaging/bundle-README.txt" > "$B/README.txt"
+# BSD-3 clause 2 and the font licences require the notices to ship with binaries.
+cp "$REPO/LICENSE" "$B/LICENSE"
+cp "$REPO/NOTICE" "$B/NOTICE"
 
 ASSET="tilion-fortress-${PLATFORM}.tar.gz"
 ( cd "$DEST" && tar czf "$ASSET" tilion-fortress )

@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
-index 2df79076df..a238b67b7c 100644
+index 44aa417..bcfbdc7 100644
 --- a/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
 +++ b/third_party/blink/renderer/modules/webgl/webgl_rendering_context_base.cc
 @@ -39,6 +39,9 @@
@@ -48,10 +48,10 @@ index 2df79076df..a238b67b7c 100644
 +  }
 +}
 +
+ // LINT.IfChange(WebGLANGLEImplementation)
  enum class WebGLANGLEImplementation {
    // These values are persisted to logs. Entries should not be renumbered and
-   // numeric values should never be reused.
-@@ -3964,6 +3997,34 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -4150,6 +4185,34 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
    if (isContextLost())
      return ScriptValue::CreateNull(script_state->GetIsolate());
    const int kIntZero = 0;
@@ -86,7 +86,7 @@ index 2df79076df..a238b67b7c 100644
    switch (pname) {
      case GL_ACTIVE_TEXTURE:
        return GetUnsignedIntParameter(script_state, pname);
-@@ -4094,6 +4155,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -4280,6 +4343,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
      case GL_SCISSOR_TEST:
        return GetBooleanParameter(script_state, pname);
      case GL_SHADING_LANGUAGE_VERSION:
@@ -99,7 +99,7 @@ index 2df79076df..a238b67b7c 100644
        return WebGLAny(
            script_state,
            StrCat({"WebGL GLSL ES 1.0 (",
-@@ -4156,6 +4223,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -4342,6 +4411,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
      case GL_VENDOR:
        return WebGLAny(script_state, String("WebKit"));
      case GL_VERSION:
@@ -112,7 +112,7 @@ index 2df79076df..a238b67b7c 100644
        return WebGLAny(
            script_state,
            StrCat({"WebGL 1.0 (", String(ContextGL()->GetString(GL_VERSION)),
-@@ -4172,8 +4245,15 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -4358,8 +4433,15 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
        return ScriptValue::CreateNull(script_state->GetIsolate());
      case WebGLDebugRendererInfo::kUnmaskedRendererWebgl:
        if (ExtensionEnabled(kWebGLDebugRendererInfoName)) {
@@ -130,7 +130,7 @@ index 2df79076df..a238b67b7c 100644
        }
        SynthesizeGLError(
            GL_INVALID_ENUM, "getParameter",
-@@ -4181,8 +4261,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
+@@ -4367,8 +4449,12 @@ ScriptValue WebGLRenderingContextBase::getParameter(ScriptState* script_state,
        return ScriptValue::CreateNull(script_state->GetIsolate());
      case WebGLDebugRendererInfo::kUnmaskedVendorWebgl:
        if (ExtensionEnabled(kWebGLDebugRendererInfoName)) {
@@ -145,7 +145,7 @@ index 2df79076df..a238b67b7c 100644
        }
        SynthesizeGLError(
            GL_INVALID_ENUM, "getParameter",
-@@ -4478,6 +4562,16 @@ WebGLShaderPrecisionFormat* WebGLRenderingContextBase::getShaderPrecisionFormat(
+@@ -4664,6 +4750,16 @@ WebGLShaderPrecisionFormat* WebGLRenderingContextBase::getShaderPrecisionFormat(
        return nullptr;
    }
  
@@ -162,7 +162,7 @@ index 2df79076df..a238b67b7c 100644
    GLint range[2] = {0, 0};
    GLint precision = 0;
    ContextGL()->GetShaderPrecisionFormat(shader_type, precision_type, range,
-@@ -5327,6 +5421,7 @@ void WebGLRenderingContextBase::ReadPixelsHelper(GLint x,
+@@ -5515,6 +5611,7 @@ void WebGLRenderingContextBase::ReadPixelsHelper(GLint x,
        return;
      }
      ContextGL()->ReadPixels(x, y, width, height, format, type, data);
